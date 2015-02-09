@@ -1,3 +1,9 @@
+// Original code by zurb.com and they really deserve all the credit.
+// https://github.com/zurb/twentytwenty
+//
+// Code modified by Anthony Kramer to work with Squarespace stacked image galleries
+//
+
 (function($){
 
   $.fn.twentytwenty = function(options) {
@@ -5,7 +11,8 @@
     return this.each(function() {
 
       var sliderPct = options.default_offset_pct;
-      var container = $(this);
+      var stacked_gallery = $(this);
+      var container = stacked_gallery.find(".sqs-gallery");
       var sliderOrientation = options.orientation;
       var beforeDirection = (sliderOrientation === 'vertical') ? 'down' : 'left';
       var afterDirection = (sliderOrientation === 'vertical') ? 'up' : 'right';
@@ -13,8 +20,8 @@
       
       container.wrap("<div class='twentytwenty-wrapper twentytwenty-" + sliderOrientation + "'></div>");
       container.append("<div class='twentytwenty-overlay'></div>");
-      var beforeImg = container.find("img:first");
-      var afterImg = container.find("img:last");
+      var beforeImg = container.find(".image-wrapper:last");
+      var afterImg = container.find(".image-wrapper:first");
       container.append("<div class='twentytwenty-handle'></div>");
       var slider = container.find(".twentytwenty-handle");
       slider.append("<span class='twentytwenty-" + beforeDirection + "-arrow'></span>");
@@ -28,8 +35,8 @@
       overlay.append("<div class='twentytwenty-after-label'></div>");
 
       var calcOffset = function(dimensionPct) {
-        var w = beforeImg.width();
-        var h = beforeImg.height();
+        var w = beforeImg.find("img").width();
+        var h = beforeImg.find("img").height();
         return {
           w: w+"px",
           h: h+"px",
@@ -40,10 +47,10 @@
 
       var adjustContainer = function(offset) {
       	if (sliderOrientation === 'vertical') {
-      	  beforeImg.css("clip", "rect(0,"+offset.w+","+offset.ch+",0)");
+      	  beforeImg.find("img").css("clip", "rect(0,"+offset.w+","+offset.ch+",0)");
       	}
       	else {
-          beforeImg.css("clip", "rect(0,"+offset.cw+","+offset.h+",0)");
+          beforeImg.find("img").css("clip", "rect(0,"+offset.cw+","+offset.h+",0)");
     	}
         container.css("height", offset.h);
       };
@@ -71,8 +78,8 @@
         container.addClass("active");
         offsetX = container.offset().left;
         offsetY = container.offset().top;
-        imgWidth = beforeImg.width(); 
-        imgHeight = beforeImg.height();          
+        imgWidth = beforeImg.find("img").width(); 
+        imgHeight = beforeImg.find("img").height();          
       });
 
       slider.on("moveend", function(e) {
