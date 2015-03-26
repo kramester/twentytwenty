@@ -35,14 +35,15 @@
       overlay.append("<div class='twentytwenty-after-label'></div>");
 
       var calcOffset = function(dimensionPct) {
-        var w = beforeImg.find("img").width();
-        var h = beforeImg.find("img").height();
+        var img = beforeImg.find("img")
+        var w = img.width();
+        var h = img.height();
         return {
           w: w+"px",
           h: h+"px",
           cw: (dimensionPct*w)+"px",
           ch: (dimensionPct*h)+"px"
-        };
+          };
       };
 
       var adjustContainer = function(offset) {
@@ -101,6 +102,15 @@
 
       container.find("img").on("mousedown", function(event) {
         event.preventDefault();
+      });
+      
+      //added this to fix an issue in Chrome where the webkit cached images wouldn't load before trying to read the size. Silly chrome.
+      var imageLoaded = beforeImg.find("img");
+      $(imageLoaded).load(function() {
+        setTimeout(function() {
+          var offset = calcOffset(options.default_offset_pct);
+          adjustContainer(offset);
+        }, 0);
       });
 
       $(window).trigger("resize.twentytwenty");
